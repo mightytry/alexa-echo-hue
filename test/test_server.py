@@ -31,6 +31,8 @@ def test_add_device():
     assert len(hub.devices) == 1
 
 def test_run_hub():
+    hub.config["IP"] = "localhost"
+    hub.config["HTTP_PORT"] = 42069
     try:
         threading.Thread(target=lambda: asyncio.run(hub.run()), daemon=True).start()
         for i in range(50):
