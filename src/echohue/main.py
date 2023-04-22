@@ -314,6 +314,7 @@ class Httpd():
     async def handle_request(self, client, data):
         if "test" in data:
             await self.event_loop.sock_sendall(client, "ok".encode())
+            return
 
         searchObj = re.search(r'content-length: (\d+)', data, re.I)
         if searchObj and int(searchObj.group(1)) > 0:
