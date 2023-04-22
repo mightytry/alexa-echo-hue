@@ -1,9 +1,13 @@
 
 import asyncio, pytest
 import socket
-import time
+import time, sys
 import threading
-from echohue import Hub, Device
+
+sys.path.insert(0, ".")
+
+from src.echohue import Hub, Device
+
 
 def test_imports():
     assert Hub
