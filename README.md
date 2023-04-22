@@ -1,8 +1,8 @@
 # Alexa-Echo-Hue
 Amazon alexa echo hue lamp emulation for python
 
-Thanks to for their work 
-[falk0069](https://github.com/falk0069/hue-upnp) and [IcynatorHD](https://www.npmjs.com/package/node-red-contrib-local-alexa-devices)
+Thanks to [falk0069](https://github.com/falk0069/hue-upnp) and [IcynatorHD](https://www.npmjs.com/package/node-red-contrib-local-alexa-devices) for their work!
+
 
 ## Table of Contents
 - [Alexa-Echo-Hue](#alexa-echo-hue)
