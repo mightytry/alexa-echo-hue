@@ -192,9 +192,12 @@ class Responder():
             # if socket closed by stop() method
             except ConnectionResetError:
                 break
-            except socket.error:
-                self.logger.error("Socket error")
-                continue
+            except socket.error as e:
+                if e.winerror == 995:
+                    break
+                else:
+                    self.logger.error(e)
+                    continue
             else:
                 if M_SEARCH_REQ_MATCH in data:
                     self.logger.debug("Received M-SEARCH from {}".format(addr))
@@ -271,9 +274,13 @@ class Httpd():
                 client, addr = await self.event_loop.sock_accept(self.sock)
             except ConnectionResetError:
                 break
-            except socket.error:
-                self.logger.error("Socket error")
-                continue
+            # if socket closed by stop() method [WinError 995] Der E/A-Vorgang wurde wegen eines Threadendes oder einer Anwendungsanforderung abgebrochen
+            except socket.error as e:
+                if e.winerror == 995:
+                    break
+                else:
+                    self.logger.error(e)
+                    continue
             else:
                 self.logger.debug("Received connection from {}".format(addr))
                 self.event_loop.create_task(self.handle(client, addr))
@@ -305,6 +312,9 @@ class Httpd():
 
 
     async def handle_request(self, client, data):
+        if "test" in data:
+            await self.event_loop.sock_sendall(client, "ok".encode())
+
         searchObj = re.search(r'content-length: (\d+)', data, re.I)
         if searchObj and int(searchObj.group(1)) > 0:
             contentLength = int(searchObj.group(1))
