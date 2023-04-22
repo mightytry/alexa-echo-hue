@@ -3,24 +3,21 @@ import asyncio, pytest
 import socket
 import time
 import threading
-
+from echohue import Hub, Device
 
 def test_imports():
-    from src.echohue import Hub, Device
     assert Hub
     assert Device
 
 # Path: test\test_server.py
 def test_hub():
     global hub
-    from src.echohue import Hub
     hub = Hub(True)
     assert hub
 
 # Path: test\test_server.py
 def test_device():
     global device
-    from src.echohue import Device
     device = Device("test")
     assert device
 
