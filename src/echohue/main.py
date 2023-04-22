@@ -757,7 +757,8 @@ class Hub(AbstractAsyncContextManager):
         global UPNP_BROADCAST, DESCRIPTION_XML, APICONFIG_JSON
         # same as the MACADDRESS with colons removed
         # Put our info in the responses
-        self.config["IP"] = self.get_ip()
+        if self.config.get("IP") is None:
+            self.config["IP"] = self.get_ip()
 
         UPNP_BROADCAST = UPNP_BROADCAST.format(self.config['IP'], self.config['HTTP_PORT'], self.config['SERIALNO'])
         DESCRIPTION_XML = DESCRIPTION_XML.format(self.config['IP'], self.config['HTTP_PORT'], self.config['IP'], self.config['SERIALNO'], self.config['SERIALNO'])
