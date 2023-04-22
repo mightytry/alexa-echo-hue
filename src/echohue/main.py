@@ -1,16 +1,17 @@
 import asyncio
 from contextlib import AbstractAsyncContextManager
+import copy
 import datetime
 import socket
 import struct
 import email.utils
 import uuid
-from aiofile import async_open
 import re
 import sys
 import logging
 import logging.handlers
 import json
+from .defaults import ALL, GETSTATE
 
 M_SEARCH_REQ_MATCH = "M-SEARCH"
 
@@ -441,7 +442,7 @@ class Httpd():
     async def get_onelight_json(self, device):
         # example template values: "on", "[0.0,0.0]", "Hue Lamp 1", "254", "201"
         # on, bri, xy, ct, name
-        data = await self.get_json_att(device, "./all.json")
+        data = await self.get_json_att(device, ALL)
         data["uniqueid"] = self.gen_unique_id()
         return json.dumps(data)
     
@@ -453,23 +454,22 @@ class Httpd():
     async def get_onelight_state_json(self, device):
         # example template values: "on", "[0.0,0.0]", "Hue Lamp 1", "254", "201"
         # on, bri, xy, ct, name
-        return json.dumps(await self.get_json_att(device, "./get-state.json"))
+        return json.dumps(await self.get_json_att(device, GETSTATE))
 
-    async def get_json_att(self, device, path):
-        async with async_open(path, 'r') as f:
-            json_resp = json.loads(await f.read())
+    async def get_json_att(self, device, template):
+        json_resp = copy.deepcopy(template)
 
-            json_resp["state"]["on"] = device.on
-            json_resp["state"]["hue"] = device.hue
-            json_resp["state"]["sat"] = device.sat
-            json_resp["state"]["bri"] = device.bri
-            json_resp["state"]["ct"] = device.ct
-            json_resp["state"]["xy"] = device.xy
-            json_resp["state"]["colormode"] = device.colormode
-            json_resp["name"] = device.name
-            json_resp["swupdate"]["lastinstall"] = datetime.datetime.now().isoformat().split(".")[0]
+        json_resp["state"]["on"] = device.on
+        json_resp["state"]["hue"] = device.hue
+        json_resp["state"]["sat"] = device.sat
+        json_resp["state"]["bri"] = device.bri
+        json_resp["state"]["ct"] = device.ct
+        json_resp["state"]["xy"] = device.xy
+        json_resp["state"]["colormode"] = device.colormode
+        json_resp["name"] = device.name
+        json_resp["swupdate"]["lastinstall"] = datetime.datetime.now().isoformat().split(".")[0]
 
-            return json_resp
+        return json_resp
 
     async def send_json(self, client, resp):
         date_str = email.utils.formatdate(timeval=None, localtime=False, usegmt=True)
