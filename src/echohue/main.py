@@ -656,8 +656,8 @@ class hue_upnp_super_handler(object):
 
 
 class Device(hue_upnp_super_handler):
-    def __init__(self, name: str, on=False, bri=1) -> None:
-        self.id = None
+    def __init__(self, name: str, on=False, bri=1, id=None) -> None:
+        self.id = id
         self.name = name
         super().__init__(
             self.name, None, None, on, bri if bri <= 254 and bri >= 1 else 1
@@ -665,7 +665,8 @@ class Device(hue_upnp_super_handler):
 
     def init(self, logger):
         self.logger = logger
-        self.id = str(int.from_bytes(hashlib.md5(self.name.encode()).digest()))[:10]
+        if not self.id:
+            self.id = str(int.from_bytes(hashlib.md5(self.name.encode()).digest()))[:10]
 
     async def set_on(self):
         self.logger.debug(f"Device: {self.name} set ON!")
