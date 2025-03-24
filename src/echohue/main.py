@@ -660,7 +660,7 @@ class Device(hue_upnp_super_handler):
         self.id = id
         self.name = name
         super().__init__(
-            self.name, None, None, on, bri if bri <= 254 and bri >= 1 else 1
+            self.name, id, None, on, bri if bri <= 254 and bri >= 1 else 1
         )
 
     def init(self, logger):
